@@ -114,18 +114,18 @@ Kinematics::velocities Kinematics::getVelocities(float rpm1, float rpm2, float r
     }
  
     //convert average revolutions per minute to revolutions per second
-    average_rps_x = ((float)(rpm1 + rpm2 + rpm3 + rpm4) / total_wheels_) / 60.0 ; // RPM
+    average_rps_x = ((float)(rpm1 + rpm2 + rpm3 + rpm4) / 10) / 60.0 ; // RPM //10
     vel.linear_x = average_rps_x * wheel_circumference_; // m/s
 
     //convert average revolutions per minute in y axis to revolutions per second
-    average_rps_y = ((float)(-rpm1 + rpm2 + rpm3 - rpm4) / total_wheels_) / 60.0; // RPM
+    average_rps_y = ((float)(-rpm1 + rpm2 + rpm3 - rpm4) / 10) / 60.0; // RPM
     if(base_platform_ == MECANUM)
         vel.linear_y = average_rps_y * wheel_circumference_; // m/s
     else
         vel.linear_y = 0;
 
     //convert average revolutions per minute to revolutions per second
-    average_rps_a = ((float)(-rpm1 + rpm2 - rpm3 + rpm4) / total_wheels_) / 60.0;
+    average_rps_a = ((float)(-rpm1 + rpm2 - rpm3 + rpm4) / 10) / 60.0;
     vel.angular_z =  (average_rps_a * wheel_circumference_) / (wheels_y_distance_ / 2.0); //  rad/s
 
     return vel;

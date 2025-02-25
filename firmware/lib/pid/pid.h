@@ -22,13 +22,33 @@ private:
         float lowpass_filt = 0;
         float lowpass_prev = 0;
         float radian = 0;
+        float deg2target = 0;
         float eProportional;
+        // struct e
+        // {
+        // float propostional;
+        // float integral;
+        // float derivative;
+        // float u;
+        // float previous;
+        // } err;
 
 public:
+
+  struct e
+        {
+        float propostional;
+        float integral;
+        float derivative;
+        float u;
+        float previous;
+        } err;
+
         PID(float MIN_VAL, float MAX_VAL, float kp, float ki, float kd);
         void paramater(float kp_, float ki_, float kd_);
         void paramaterT(float kp_, float ki_, float kd_);
-        float control_angle(float target, float enc, float deltaT);
+        float control_angle(float target,float pwm, float enc, float deltaT);
+        float control_angle_speed(float target_angle,float target_speed,float enc,float deltaT);
         float control_base(float error, float speed, int condition, float deltaT);
         float control_speed(float target, float enc, float deltaT);
         float control_default(float target, float curr, float deltaT);
@@ -37,4 +57,10 @@ public:
         float get_filt_vel() const;
         float get_vel() const;
         float get_enc_vel() const;
+        float get_deg2Target()const;
+        float get_error() const;
+        float get_error_int() const;
+        float get_error_der() const;
+        float get_pid_out() const;       
+
 };

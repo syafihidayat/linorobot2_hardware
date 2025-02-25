@@ -34,23 +34,32 @@ void PID::paramaterT(float kp_, float ki_, float kd_)
     kdT = kd_;
 }
 
-float PID::control_angle(float target, float enc, float deltaT)
+float PID::control_angle(float target, float enc,float pwm, float deltaT)
 {
-    float error = target - enc;
-    float error_trans = error;
-    if (error_trans > 180)
-    {
-        error_trans -= 360;
-    }
-    else if (error_trans < -180)
-    {
-        error += 360;
-    }
-    eIntegral += error_trans * deltaT;
-    float eDerivative = (error_trans - prevError) / deltaT;
-    prevError = error_trans;
-    float u = KP * error_trans + KI * eIntegral + KD * eDerivative;
-    return fmax(min_val_, fmin(u, max_val_));
+    deg2target = target / 360 * 3840;
+
+    err.propostional = deg2target - enc;
+    
+    err.integral += err.propostional * deltaT;
+    err.derivative = (err.propostional - err.previous) / deltaT;
+    err.previous = err.propostional;
+    err.u = KP * err.propostional + KI * err.integral + KD * err.derivative;
+    return fmax(-1 * pwm, fmin(err.u, pwm));
+}
+
+float PID::control_angle_speed(float target_angle,float target_speed,float enc,float deltaT){
+
+    deg2target = target_angle / 360 *3840;
+
+    err.propostional = deg2target - enc;
+    err.integral += err.propostional * deltaT;
+
+    err.derivative = (err.propostional - err.previous);
+    err.previous = err.propostional;
+
+    err.u = KP * err.propostional + KI * err.integral + KD * err.derivative;
+    return control_speed(target_speed, enc, deltaT);
+
 }
 
 float PID::control_base(float error, float speed, int condition, float deltaT)
@@ -82,7 +91,7 @@ float PID::control_base(float error, float speed, int condition, float deltaT)
 float PID::control_speed(float target, float enc, float deltaT)
   {
     /*convert nilai*/
-    radian = (enc - encPrev) / deltaT; // encoder count menjadid encoder count/second
+    radian = (enc - encPrev) / deltaT; // encoder count menjadi encoder count/second
     encPrev = enc;
     angular_vel = radian / (total_gear_ratio * enc_ppr); // convert encoder count/second jadi radian/second
 
@@ -122,6 +131,28 @@ float PID::get_lowPass(float lowpass_input)
 
     return lowpass_filt;
 }
+float PID::get_deg2Target()const
+{
+    return deg2target;
+}
+float PID::get_error() const
+{
+    return err.propostional;
+}
+ float PID::get_error_int() const
+  {
+    return err.integral;
+  }
+
+  float PID::get_error_der() const
+  {
+    return err.derivative;
+  }
+
+  float PID::get_pid_out() const
+  {
+    return err.u;
+  }
 float PID::get_filt_vel() const
 {
     return angular_vel_Filt;

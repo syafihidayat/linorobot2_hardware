@@ -35,10 +35,14 @@
 // #define USE_MPU9250_IMU
 #define USE_BNO055_IMU
 
-#define K_P 65                            // P constant
-#define K_I 110                           // I constant
+#define K_P 70// 0          //49.5                           // P constant
+#define K_I 160.707317073//100        //141.428571429       I constant
 #define K_D 0                             // D constant
 
+
+// #define K_P 90            // 55
+// #define K_I 366.101694915 // 0.045454545
+// #define K_D 0             // 0
 /*
 ROBOT ORIENTATION
          FRONT
@@ -53,10 +57,10 @@ ROBOT ORIENTATION
 #define MOTOR_OPERATING_VOLTAGE 24          // motor's operating voltage (used to calculate max RPM)
 #define MOTOR_POWER_MAX_VOLTAGE 23.5          // max voltage of the motor's power source (used to calculate max RPM)
 #define MOTOR_POWER_MEASURED_VOLTAGE 24     // current voltage reading of the power connected to the motor (used for calibration)
-#define COUNTS_PER_REV1 2700              // wheel1 encoder's no of ticks per rev
-#define COUNTS_PER_REV2 2700              // wheel2 encoder's no of ticks per rev
-#define COUNTS_PER_REV3 2700              // wheel3 encoder's no of ticks per rev
-#define COUNTS_PER_REV4 2700              // wheel4 encoder's no of ticks per rev
+#define COUNTS_PER_REV1 3840              // wheel1 encoder's no of ticks per rev
+#define COUNTS_PER_REV2 3840              // wheel2 encoder's no of ticks per rev
+#define COUNTS_PER_REV3 3840              // wheel3 encoder's no of ticks per rev
+#define COUNTS_PER_REV4 3840              // wheel4 encoder's no of ticks per rev
 #define WHEEL_DIAMETER 0.1             // wheel's diameter in meters
 #define LR_WHEELS_DISTANCE 0.475          // distance between left and right wheels
 #define PWM_BITS 8                          // PWM Resolution of the microcontroller
@@ -104,8 +108,15 @@ ROBOT ORIENTATION
   #define MOTOR4_IN_A 5
   #define MOTOR4_IN_B 6
 
-const int cw[4] = {MOTOR4_IN_A, MOTOR3_IN_A, MOTOR2_IN_A, MOTOR1_IN_A};
-const int ccw[4] = {MOTOR4_IN_B, MOTOR3_IN_B, MOTOR2_IN_B,MOTOR1_IN_B};
+  #define MOTOR_upA 36 
+  #define MOTOR_upB 37
+
+  #define  solenoid1  41
+  #define  limitSwitch1  38 //limit bawah
+  #define  limitSwitch2  39 //limit atas
+
+const int cw[5] = {MOTOR4_IN_A, MOTOR3_IN_A, MOTOR2_IN_A, MOTOR1_IN_A, MOTOR_upA};
+const int ccw[5] = {MOTOR4_IN_B, MOTOR3_IN_B, MOTOR2_IN_B,MOTOR1_IN_B, MOTOR_upB};
 
 
   #define PWM_MAX pow(2, PWM_BITS) - 1

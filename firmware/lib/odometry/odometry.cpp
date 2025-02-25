@@ -24,6 +24,59 @@ Odometry::Odometry():
 }
 
 void Odometry::update(float vel_dt, float linear_vel_x, float linear_vel_y, float angular_vel_z)
+    {
+
+        if (std::abs(linear_vel_y) < 0.0001) // Toleransi kecil
+        linear_vel_y = 0.0;
+        
+        float delta_heading = angular_vel_z * vel_dt; // radians
+        float cos_h = cos(heading_);
+        float sin_h = sin(heading_);
+        float delta_x = (linear_vel_x * cos_h - linear_vel_y * sin_h) * vel_dt; // m
+        float delta_y = (linear_vel_x * sin_h + linear_vel_y * cos_h) * vel_dt; // m
+
+        // calculate current position of the robot
+        x_pos_ += delta_x;
+        y_pos_ += delta_y;
+        heading_ += delta_heading;
+
+        // calculate obot's heading in quaternion angle
+        // ROS has a function to calculate yaw in quaternion angle
+        float q[4];
+        euler_to_quat(0, 0, heading_, q);
+
+        // robot's position in x,y, and z
+        odom_msg_.pose.pose.position.x = x_pos_;
+        odom_msg_.pose.pose.position.y = y_pos_;
+        odom_msg_.pose.pose.position.z = 0.0;
+
+        // robot's heading in quaternion
+        odom_msg_.pose.pose.orientation.x = (double)q[1];
+        odom_msg_.pose.pose.orientation.y = (double)q[2];
+        odom_msg_.pose.pose.orientation.z = (double)q[3];
+        odom_msg_.pose.pose.orientation.w = (double)q[0];
+
+        odom_msg_.pose.covariance[0] = 0.001;
+        odom_msg_.pose.covariance[7] = 0.001;
+        odom_msg_.pose.covariance[35] = 0.001;
+
+        // linear speed from encoders
+        odom_msg_.twist.twist.linear.x = linear_vel_x;
+        odom_msg_.twist.twist.linear.y = linear_vel_y;
+        odom_msg_.twist.twist.linear.z = 0.0;
+
+        // angular speed from encoders
+        odom_msg_.twist.twist.angular.x = 0.0;
+        odom_msg_.twist.twist.angular.y = 0.0;
+        odom_msg_.twist.twist.angular.z = angular_vel_z;
+
+        odom_msg_.twist.covariance[0] = 0.0001;
+        odom_msg_.twist.covariance[7] = 0.0001;
+        odom_msg_.twist.covariance[35] = 0.0001;
+    }
+
+
+void Odometry::update(float vel_dt, float linear_vel_x, float linear_vel_y, float angular_vel_z, float orientation_z)
 {
 
      if (std::abs(linear_vel_y) < 0.0001) // Toleransi kecil
@@ -38,7 +91,7 @@ void Odometry::update(float vel_dt, float linear_vel_x, float linear_vel_y, floa
     //calculate current position of the robot
     x_pos_ += delta_x;
     y_pos_ += delta_y;
-    heading_ += delta_heading;
+    heading_ += orientation_z;
 
     //calculate robot's heading in quaternion angle
     //ROS has a function to calculate yaw in quaternion angle
